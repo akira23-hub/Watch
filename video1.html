@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Katas</title>
+<style>
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Video Container - FIXED SIZE */
+.video-container {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto 25px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: #000;
+    position: relative;
+    aspect-ratio: 16/9; /* Fixed 16:9 aspect ratio */
+}
+
+/* Force video to fill container */
+video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000;
+}
+
+/* HIDE ALL DOWNLOAD OPTIONS IN VIDEO CONTROLS */
+/* Hide download button in Chrome/Safari */
+video::-webkit-media-controls-download-button {
+    display: none !important;
+}
+
+/* Hide download option in context menu */
+video::-internal-media-controls-download-button {
+    display: none !important;
+}
+
+/* Hide the three dots menu entirely */
+video::-webkit-media-controls-overflow-button {
+    display: none !important;
+}
+
+/* Hide overflow menu enclosure */
+video::-webkit-media-controls-overlay-enclosure {
+    display: none !important;
+}
+
+/* Hide picture-in-picture button */
+video::-webkit-media-controls-picture-in-picture-button {
+    display: none !important;
+}
+
+/* Hide fullscreen button from native controls (we have our own) */
+video::-webkit-media-controls-fullscreen-button {
+    display: none !important;
+}
+
+/* Controls */
+.controls {
+    max-width: 900px;
+    margin: 20px auto 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 0 10px;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn i {
+    font-size: 18px;
+}
+
+#fsBtn {
+    background: linear-gradient(to right, #00b09b, #96c93d);
+    color: white;
+}
+
+#fsBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 176, 155, 0.4);
+}
+
+select {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+select:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+select option {
+    background: #1a1a2e;
+    color: white;
+}
+
+/* Download Buttons Section */
+.download-section {
+    max-width: 900px;
+    margin: 25px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.download-section h3 {
+    margin-bottom: 20px;
+    color: #96c93d;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.download-section h3 i {
+    color: #FF4B2B;
+}
+
+.download-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.download-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #FF416C, #FF4B2B);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+    min-width: 180px;
+    justify-content: center;
+}
+
+.download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
+}
+
+.download-btn:active {
+    transform: translateY(-1px);
+}
+
+.download-btn i {
+    font-size: 18px;
+}
+
+.download-btn:nth-child(2) {
+    background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+    box-shadow: 0 4px 15px rgba(74, 0, 224, 0.3);
+}
+
+.download-btn:nth-child(2):hover {
+    box-shadow: 0 6px 20px rgba(74, 0, 224, 0.4);
+}
+
+.download-btn:nth-child(3) {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    box-shadow: 0 4px 15px rgba(0, 176, 155, 0.3);
+}
+
+.download-btn:nth-child(3):hover {
+    box-shadow: 0 6px 20px rgba(0, 176, 155, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .video-container {
+        max-width: 95%;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .control-btn, select {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+    
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .download-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .control-btn, select {
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+    
+    .video-container {
+        max-width: 95%;
+    }
+    
+    .download-btn {
+        padding: 12px 20px;
+        font-size: 15px;
+        min-width: 160px;
+    }
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Fixed Size Video Container -->
+<div class="video-container">
+    <video id="player" controls playsinline webkit-playsinline controlsList="nodownload noremoteplayback">
+        <source src="https://cdn.videy.co/8y4FOOKa1.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+</div>
+
+<div class="controls">
+    <button class="control-btn" id="fsBtn">
+        <i class="fas fa-expand"></i>
+        <span>Fullscreen</span>
+    </button>
+
+    <select id="speed">
+        <option value="1">Speed: Normal</option>
+        <option value="0.5">0.5x (Slow)</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x (Fast)</option>
+    </select>
+</div>
+
+<!-- Download Buttons Section -->
+<div class="download-section">
+    <h3><i class="fas fa-download"></i> Download Options</h3>
+    <div class="download-buttons">
+        <button class="download-btn" id="downloadBtn1">
+            <i class="fas fa-download"></i>
+            <span>DOWNLOAD</span>
+        </button>
+        <button class="download-btn" id="downloadBtn2">
+            <i class="fas fa-download"></i>
+            <span>DOWNLOAD</span>
+        </button>
+        <button class="download-btn" id="downloadBtn3">
+            <i class="fas fa-download"></i>
+            <span>DOWNLOAD</span>
+        </button>
+    </div>
+</div>
+
+<script>
+// =========================
+// ⭐ Variables
+// =========================
+const video = document.getElementById("player");
+const fsBtn = document.getElementById("fsBtn");
+const speedSelect = document.getElementById("speed");
+const downloadBtn1 = document.getElementById("downloadBtn1");
+const downloadBtn2 = document.getElementById("downloadBtn2");
+const downloadBtn3 = document.getElementById("downloadBtn3");
+let wakeLock = null;
+
+// =========================
+// ⭐ COMPLETELY DISABLE DOWNLOAD FROM VIDEO CONTROLS
+// =========================
+
+// 1. Add controlsList attribute to disable download
+video.setAttribute('controlsList', 'nodownload nofullscreen noremoteplayback');
+video.removeAttribute('download');
+
+// 2. Disable right-click context menu
+video.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// 3. Disable keyboard shortcuts for saving
+document.addEventListener('keydown', function(e) {
+    // Disable Ctrl+S
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// 4. Periodically check and remove download button if it appears
+function checkAndRemoveDownloadButton() {
+    // Try to find and hide any download-related elements
+    const downloadButtons = document.querySelectorAll('*[download], *[aria-label*="download"], *[aria-label*="Download"], *[title*="download"], *[title*="Download"]');
+    downloadButtons.forEach(btn => {
+        if (btn.style.display !== 'none') {
+            btn.style.display = 'none';
+            btn.style.visibility = 'hidden';
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+        }
+    });
+    
+    // Check for video control buttons
+    const videoControls = video.parentElement.querySelectorAll('button, div, span');
+    videoControls.forEach(control => {
+        const text = control.textContent || control.innerText || control.getAttribute('aria-label') || control.getAttribute('title') || '';
+        if (text.toLowerCase().includes('download') || 
+            text.toLowerCase().includes('save') ||
+            text.toLowerCase().includes('download video') ||
+            text.toLowerCase().includes('save video')) {
+            control.style.display = 'none';
+            control.style.visibility = 'hidden';
+            control.style.opacity = '0';
+            control.style.pointerEvents = 'none';
+        }
+    });
+}
+
+// Run check periodically
+setInterval(checkAndRemoveDownloadButton, 1000);
+
+// Also check when video controls are shown
+video.addEventListener('loadedmetadata', checkAndRemoveDownloadButton);
+video.addEventListener('play', checkAndRemoveDownloadButton);
+video.addEventListener('pause', checkAndRemoveDownloadButton);
+
+// 5. Disable picture-in-picture
+if ('pictureInPictureEnabled' in document) {
+    video.disablePictureInPicture = true;
+}
+
+// =========================
+// ⭐ Download Buttons Functionality (BELOW THE PLAYER)
+// =========================
+downloadBtn1.addEventListener("click", function() {
+    // Open main site
+    window.open("https://watch.boldilocks.xyz/", "_self");
+    // Open monetag ad in new tab after delay to avoid popup blocker
+    setTimeout(() => {
+        window.open("https://otieu.com/4/7512585", "_blank");
+    }, 100);
+});
+
+downloadBtn2.addEventListener("click", function() {
+    // Open main site
+    window.open("https://watch.boldilocks.xyz/", "_self");
+    // Open monetag ad in new tab after delay to avoid popup blocker
+    setTimeout(() => {
+        window.open("https://otieu.com/4/8251888", "_blank");
+    }, 100);
+});
+
+downloadBtn3.addEventListener("click", function() {
+    // Open main site
+    window.open("https://watch.boldilocks.xyz/", "_self");
+    // Open monetag ad in new tab after delay to avoid popup blocker
+    setTimeout(() => {
+        window.open("https://otieu.com/4/7512585", "_blank");
+    }, 100);
+});
+
+// =========================
+// ⭐ Prevent Screen Sleep
+// =========================
+async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+            console.log("Wake Lock activated to prevent screen sleep");
+        } catch (err) {
+            console.log(`Error activating wake lock: ${err.name}, ${err.message}`);
+        }
+    }
+}
+
+video.addEventListener("play", requestWakeLock);
+
+video.addEventListener("pause", () => {
+    if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+        console.log("Wake Lock released");
+    }
+});
+
+video.addEventListener("ended", () => {
+    if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+        console.log("Wake Lock released");
+    }
+});
+
+// =========================
+// ⭐ Fullscreen Button
+// =========================
+fsBtn.addEventListener("click", () => {
+    const videoContainer = document.querySelector('.video-container');
+    if (videoContainer.requestFullscreen) {
+        videoContainer.requestFullscreen();
+    } else if (videoContainer.webkitRequestFullscreen) {
+        videoContainer.webkitRequestFullscreen();
+    } else if (videoContainer.mozRequestFullScreen) {
+        videoContainer.mozRequestFullScreen();
+    } else if (videoContainer.msRequestFullscreen) {
+        videoContainer.msRequestFullscreen();
+    }
+});
+
+// =========================
+// ⭐ Playback Speed
+// =========================
+speedSelect.addEventListener("change", function() {
+    video.playbackRate = parseFloat(this.value);
+    
+    // Show notification for speed change
+    const speedLabels = {
+        "0.5": "0.5x (Slow)",
+        "1": "Normal",
+        "1.25": "1.25x",
+        "1.5": "1.5x",
+        "2": "2x (Fast)"
+    };
+    
+    console.log(`Playback speed changed to ${speedLabels[this.value]}`);
+});
+
+// =========================
+// ⭐ Additional Professional Features
+// =========================
+
+// Handle fullscreen change to update button icon
+document.addEventListener("fullscreenchange", updateFullscreenButton);
+document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+document.addEventListener("mozfullscreenchange", updateFullscreenButton);
+document.addEventListener("MSFullscreenChange", updateFullscreenButton);
+
+function updateFullscreenButton() {
+    const isFullscreen = document.fullscreenElement || 
+                        document.webkitFullscreenElement || 
+                        document.mozFullScreenElement || 
+                        document.msFullscreenElement;
+    
+    if (isFullscreen) {
+        fsBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
+    } else {
+        fsBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
+    }
+}
+
+// Keyboard shortcuts for better UX
+document.addEventListener("keydown", function(e) {
+    // F key for fullscreen
+    if (e.code === "KeyF" && e.target === document.body) {
+        e.preventDefault();
+        fsBtn.click();
+    }
+    
+    // Spacebar to play/pause (native video controls)
+    if (e.code === "Space" && e.target === document.body) {
+        e.preventDefault();
+        if (video.paused) {
+            video.play();
+        } else {
+            video.pause();
+        }
+    }
+    
+    // Arrow keys for seeking
+    if (e.code === "ArrowRight" && e.target === document.body) {
+        e.preventDefault();
+        video.currentTime += 10; // Skip forward 10 seconds
+    }
+    
+    if (e.code === "ArrowLeft" && e.target === document.body) {
+        e.preventDefault();
+        video.currentTime -= 10; // Skip backward 10 seconds
+    }
+});
+</script>
+</body>
+</html>
