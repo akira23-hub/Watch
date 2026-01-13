@@ -30,7 +30,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     background: #000;
     position: relative;
-    aspect-ratio: 16/9; /* Fixed 16:9 aspect ratio */
+    aspect-ratio: 16/9;
 }
 
 /* Force video to fill container */
@@ -42,32 +42,26 @@ video {
 }
 
 /* HIDE ALL DOWNLOAD OPTIONS IN VIDEO CONTROLS */
-/* Hide download button in Chrome/Safari */
 video::-webkit-media-controls-download-button {
     display: none !important;
 }
 
-/* Hide download option in context menu */
 video::-internal-media-controls-download-button {
     display: none !important;
 }
 
-/* Hide the three dots menu entirely */
 video::-webkit-media-controls-overflow-button {
     display: none !important;
 }
 
-/* Hide overflow menu enclosure */
 video::-webkit-media-controls-overlay-enclosure {
     display: none !important;
 }
 
-/* Hide picture-in-picture button */
 video::-webkit-media-controls-picture-in-picture-button {
     display: none !important;
 }
 
-/* Hide fullscreen button from native controls (we have our own) */
 video::-webkit-media-controls-fullscreen-button {
     display: none !important;
 }
@@ -180,6 +174,8 @@ select option {
     box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
     min-width: 180px;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .download-btn:hover {
@@ -213,6 +209,32 @@ select option {
     box-shadow: 0 6px 20px rgba(0, 176, 155, 0.4);
 }
 
+/* Ad Notification */
+.ad-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #FF416C, #FF4B2B);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+.ad-notification i {
+    font-size: 20px;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .video-container {
@@ -238,6 +260,13 @@ select option {
     .download-btn {
         width: 100%;
         max-width: 300px;
+    }
+    
+    .ad-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        text-align: center;
     }
 }
 
@@ -291,17 +320,23 @@ select option {
     <div class="download-buttons">
         <button class="download-btn" id="downloadBtn1">
             <i class="fas fa-download"></i>
-            <span>DOWNLOAD</span>
+            <span>DOWNLOAD 1</span>
         </button>
         <button class="download-btn" id="downloadBtn2">
             <i class="fas fa-download"></i>
-            <span>DOWNLOAD</span>
+            <span>DOWNLOAD 2</span>
         </button>
         <button class="download-btn" id="downloadBtn3">
             <i class="fas fa-download"></i>
-            <span>DOWNLOAD</span>
+            <span>DOWNLOAD 3</span>
         </button>
     </div>
+</div>
+
+<!-- Ad Notification -->
+<div class="ad-notification" id="adNotification">
+    <i class="fas fa-external-link-alt"></i>
+    <span>Please allow popups to continue...</span>
 </div>
 
 <script>
@@ -314,6 +349,7 @@ const speedSelect = document.getElementById("speed");
 const downloadBtn1 = document.getElementById("downloadBtn1");
 const downloadBtn2 = document.getElementById("downloadBtn2");
 const downloadBtn3 = document.getElementById("downloadBtn3");
+const adNotification = document.getElementById("adNotification");
 let wakeLock = null;
 
 // =========================
@@ -341,7 +377,6 @@ document.addEventListener('keydown', function(e) {
 
 // 4. Periodically check and remove download button if it appears
 function checkAndRemoveDownloadButton() {
-    // Try to find and hide any download-related elements
     const downloadButtons = document.querySelectorAll('*[download], *[aria-label*="download"], *[aria-label*="Download"], *[title*="download"], *[title*="Download"]');
     downloadButtons.forEach(btn => {
         if (btn.style.display !== 'none') {
@@ -352,7 +387,6 @@ function checkAndRemoveDownloadButton() {
         }
     });
     
-    // Check for video control buttons
     const videoControls = video.parentElement.querySelectorAll('button, div, span');
     videoControls.forEach(control => {
         const text = control.textContent || control.innerText || control.getAttribute('aria-label') || control.getAttribute('title') || '';
@@ -371,7 +405,6 @@ function checkAndRemoveDownloadButton() {
 // Run check periodically
 setInterval(checkAndRemoveDownloadButton, 1000);
 
-// Also check when video controls are shown
 video.addEventListener('loadedmetadata', checkAndRemoveDownloadButton);
 video.addEventListener('play', checkAndRemoveDownloadButton);
 video.addEventListener('pause', checkAndRemoveDownloadButton);
@@ -382,33 +415,65 @@ if ('pictureInPictureEnabled' in document) {
 }
 
 // =========================
-// ⭐ Download Buttons Functionality (BELOW THE PLAYER)
+// ⭐ AD OPENING FUNCTION - PREVENT BLOCKING
 // =========================
-downloadBtn1.addEventListener("click", function() {
-    // Open main site
-    window.open("https://watch.boldilocks.xyz/", "_self");
-    // Open monetag ad in new tab after delay to avoid popup blocker
+function openAdAndRedirect(adUrl, redirectUrl) {
+    // Show notification to allow popups
+    adNotification.style.display = 'flex';
     setTimeout(() => {
-        window.open("https://otieu.com/4/7512585", "_blank");
-    }, 100);
+        adNotification.style.display = 'none';
+    }, 3000);
+    
+    // Open ad in new tab (try multiple methods to avoid blocking)
+    try {
+        // Method 1: Direct window.open (most reliable when triggered by user click)
+        const adWindow = window.open(adUrl, '_blank', 'noopener,noreferrer');
+        
+        // If popup blocked, try method 2
+        if (!adWindow || adWindow.closed || typeof adWindow.closed == 'undefined') {
+            // Method 2: Create anchor element and click it
+            const link = document.createElement('a');
+            link.href = adUrl;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+                document.body.removeChild(link);
+            }, 100);
+        }
+        
+        // Redirect current tab to download site after short delay
+        setTimeout(() => {
+            window.location.href = redirectUrl;
+        }, 100);
+        
+    } catch (error) {
+        console.log('Error opening ad:', error);
+        // If all fails, just redirect to download site
+        window.location.href = redirectUrl;
+    }
+}
+
+// =========================
+// ⭐ Download Buttons Functionality
+// =========================
+downloadBtn1.addEventListener("click", function(e) {
+    e.preventDefault();
+    // Open ad in new tab, redirect current tab to main download site
+    openAdAndRedirect("https://otieu.com/4/7512585", "https://www.boldilocks.xyz/");
 });
 
-downloadBtn2.addEventListener("click", function() {
-    // Open main site
-    window.open("https://watch.boldilocks.xyz/", "_self");
-    // Open monetag ad in new tab after delay to avoid popup blocker
-    setTimeout(() => {
-        window.open("https://otieu.com/4/8251888", "_blank");
-    }, 100);
+downloadBtn2.addEventListener("click", function(e) {
+    e.preventDefault();
+    // Open ad in new tab, redirect current tab to main download site
+    openAdAndRedirect("https://otieu.com/4/8251888", "https://www.boldilocks.xyz/");
 });
 
-downloadBtn3.addEventListener("click", function() {
-    // Open main site
-    window.open("https://watch.boldilocks.xyz/", "_self");
-    // Open monetag ad in new tab after delay to avoid popup blocker
-    setTimeout(() => {
-        window.open("https://otieu.com/4/7512585", "_blank");
-    }, 100);
+downloadBtn3.addEventListener("click", function(e) {
+    e.preventDefault();
+    // Open ad in new tab, redirect current tab to main download site
+    openAdAndRedirect("https://otieu.com/4/7512585", "https://www.boldilocks.xyz/");
 });
 
 // =========================
@@ -465,7 +530,6 @@ fsBtn.addEventListener("click", () => {
 speedSelect.addEventListener("change", function() {
     video.playbackRate = parseFloat(this.value);
     
-    // Show notification for speed change
     const speedLabels = {
         "0.5": "0.5x (Slow)",
         "1": "Normal",
@@ -521,13 +585,55 @@ document.addEventListener("keydown", function(e) {
     // Arrow keys for seeking
     if (e.code === "ArrowRight" && e.target === document.body) {
         e.preventDefault();
-        video.currentTime += 10; // Skip forward 10 seconds
+        video.currentTime += 10;
     }
     
     if (e.code === "ArrowLeft" && e.target === document.body) {
         e.preventDefault();
-        video.currentTime -= 10; // Skip backward 10 seconds
+        video.currentTime -= 10;
     }
+});
+
+// =========================
+// ⭐ ADDITIONAL AD-BLOCK PREVENTION
+// =========================
+
+// Generate dynamic URLs to avoid pattern blocking
+function generateDynamicUrl(baseUrl) {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
+    return `${baseUrl}?t=${timestamp}&r=${random}&ref=${encodeURIComponent(window.location.hostname)}`;
+}
+
+// Pre-fetch ad URLs to establish connection (reduces blocking)
+function preFetchAds() {
+    const adUrls = [
+        "https://otieu.com/4/7512585",
+        "https://otieu.com/4/8251888"
+    ];
+    
+    adUrls.forEach(url => {
+        // Create invisible iframe to establish connection
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
+        iframe.src = generateDynamicUrl(url);
+        document.body.appendChild(iframe);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            if (document.body.contains(iframe)) {
+                document.body.removeChild(iframe);
+            }
+        }, 3000);
+    });
+}
+
+// Pre-fetch ads when page loads
+window.addEventListener('load', function() {
+    setTimeout(preFetchAds, 2000);
 });
 </script>
 </body>
