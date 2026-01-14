@@ -174,17 +174,11 @@ select option {
     box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
     min-width: 180px;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
 }
 
 .download-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
-}
-
-.download-btn:active {
-    transform: translateY(-1px);
 }
 
 .download-btn i {
@@ -207,32 +201,6 @@ select option {
 
 .download-btn:nth-child(3):hover {
     box-shadow: 0 6px 20px rgba(0, 176, 155, 0.4);
-}
-
-/* Ad Notification */
-.ad-notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #FF416C, #FF4B2B);
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    animation: slideIn 0.3s ease;
-}
-
-.ad-notification i {
-    font-size: 20px;
-}
-
-@keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
 }
 
 /* Responsive Design */
@@ -260,13 +228,6 @@ select option {
     .download-btn {
         width: 100%;
         max-width: 300px;
-    }
-    
-    .ad-notification {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        text-align: center;
     }
 }
 
@@ -333,12 +294,6 @@ select option {
     </div>
 </div>
 
-<!-- Ad Notification -->
-<div class="ad-notification" id="adNotification">
-    <i class="fas fa-external-link-alt"></i>
-    <span>Please allow popups to continue...</span>
-</div>
-
 <script>
 // =========================
 // ⭐ Variables
@@ -349,7 +304,7 @@ const speedSelect = document.getElementById("speed");
 const downloadBtn1 = document.getElementById("downloadBtn1");
 const downloadBtn2 = document.getElementById("downloadBtn2");
 const downloadBtn3 = document.getElementById("downloadBtn3");
-const adNotification = document.getElementById("adNotification");
+
 let wakeLock = null;
 
 // =========================
@@ -415,65 +370,32 @@ if ('pictureInPictureEnabled' in document) {
 }
 
 // =========================
-// ⭐ AD OPENING FUNCTION - PREVENT BLOCKING
+// ⭐ SIMPLE DOWNLOAD BUTTONS (Based on your working example)
 // =========================
-function openAdAndRedirect(adUrl, redirectUrl) {
-    // Show notification to allow popups
-    adNotification.style.display = 'flex';
-    setTimeout(() => {
-        adNotification.style.display = 'none';
-    }, 3000);
+
+// Simple direct approach like your working code
+downloadBtn1.addEventListener("click", function() {
+    // Open ad in new tab (just like your working example)
+    window.open("https://otieu.com/4/7512585", "_blank");
     
-    // Open ad in new tab (try multiple methods to avoid blocking)
-    try {
-        // Method 1: Direct window.open (most reliable when triggered by user click)
-        const adWindow = window.open(adUrl, '_blank', 'noopener,noreferrer');
-        
-        // If popup blocked, try method 2
-        if (!adWindow || adWindow.closed || typeof adWindow.closed == 'undefined') {
-            // Method 2: Create anchor element and click it
-            const link = document.createElement('a');
-            link.href = adUrl;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            document.body.appendChild(link);
-            link.click();
-            setTimeout(() => {
-                document.body.removeChild(link);
-            }, 100);
-        }
-        
-        // Redirect current tab to download site after short delay
-        setTimeout(() => {
-            window.location.href = redirectUrl;
-        }, 100);
-        
-    } catch (error) {
-        console.log('Error opening ad:', error);
-        // If all fails, just redirect to download site
-        window.location.href = redirectUrl;
-    }
-}
-
-// =========================
-// ⭐ Download Buttons Functionality
-// =========================
-downloadBtn1.addEventListener("click", function(e) {
-    e.preventDefault();
-    // Open ad in new tab, redirect current tab to main download site
-    openAdAndRedirect("https://otieu.com/4/7512585", "https://www.boldilocks.xyz/");
+    // Redirect current tab to main download site
+    window.location.href = "https://www.boldilocks.xyz/";
 });
 
-downloadBtn2.addEventListener("click", function(e) {
-    e.preventDefault();
-    // Open ad in new tab, redirect current tab to main download site
-    openAdAndRedirect("https://otieu.com/4/8251888", "https://www.boldilocks.xyz/");
+downloadBtn2.addEventListener("click", function() {
+    // Open ad in new tab (just like your working example)
+    window.open("https://otieu.com/4/8251888", "_blank");
+    
+    // Redirect current tab to main download site
+    window.location.href = "https://www.boldilocks.xyz/";
 });
 
-downloadBtn3.addEventListener("click", function(e) {
-    e.preventDefault();
-    // Open ad in new tab, redirect current tab to main download site
-    openAdAndRedirect("https://otieu.com/4/7512585", "https://www.boldilocks.xyz/");
+downloadBtn3.addEventListener("click", function() {
+    // Open ad in new tab (just like your working example)
+    window.open("https://otieu.com/4/7512585", "_blank");
+    
+    // Redirect current tab to main download site
+    window.location.href = "https://www.boldilocks.xyz/";
 });
 
 // =========================
@@ -592,48 +514,6 @@ document.addEventListener("keydown", function(e) {
         e.preventDefault();
         video.currentTime -= 10;
     }
-});
-
-// =========================
-// ⭐ ADDITIONAL AD-BLOCK PREVENTION
-// =========================
-
-// Generate dynamic URLs to avoid pattern blocking
-function generateDynamicUrl(baseUrl) {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(7);
-    return `${baseUrl}?t=${timestamp}&r=${random}&ref=${encodeURIComponent(window.location.hostname)}`;
-}
-
-// Pre-fetch ad URLs to establish connection (reduces blocking)
-function preFetchAds() {
-    const adUrls = [
-        "https://otieu.com/4/7512585",
-        "https://otieu.com/4/8251888"
-    ];
-    
-    adUrls.forEach(url => {
-        // Create invisible iframe to establish connection
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.style.width = '0';
-        iframe.style.height = '0';
-        iframe.style.border = '0';
-        iframe.src = generateDynamicUrl(url);
-        document.body.appendChild(iframe);
-        
-        // Remove after 3 seconds
-        setTimeout(() => {
-            if (document.body.contains(iframe)) {
-                document.body.removeChild(iframe);
-            }
-        }, 3000);
-    });
-}
-
-// Pre-fetch ads when page loads
-window.addEventListener('load', function() {
-    setTimeout(preFetchAds, 2000);
 });
 </script>
 </body>
