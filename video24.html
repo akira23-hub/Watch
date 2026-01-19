@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Player</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.video-container {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto 15px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: #000;
+    aspect-ratio: 16/9;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000;
+}
+
+video::-webkit-media-controls-download-button {
+    display: none !important;
+}
+
+video::-internal-media-controls-download-button {
+    display: none !important;
+}
+
+video::-webkit-media-controls-overflow-button {
+    display: none !important;
+}
+
+video::-webkit-media-controls-overlay-enclosure {
+    display: none !important;
+}
+
+video::-webkit-media-controls-picture-in-picture-button {
+    display: none !important;
+}
+
+/* SIMPLE ONE-LINER INSTRUCTION */
+.instruction {
+    max-width: 900px;
+    margin: 15px auto;
+    text-align: center;
+    padding: 12px;
+    color: #96c93d;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.download-section {
+    max-width: 900px;
+    margin: 25px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.download-section h3 {
+    margin-bottom: 20px;
+    color: #96c93d;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.download-section h3 i {
+    color: #FF4B2B;
+}
+
+.download-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.download-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #FF416C, #FF4B2B);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+    min-width: 180px;
+    justify-content: center;
+}
+
+.download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
+}
+
+.download-btn i {
+    font-size: 18px;
+}
+
+.download-btn:nth-child(2) {
+    background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+    box-shadow: 0 4px 15px rgba(74, 0, 224, 0.3);
+}
+
+.download-btn:nth-child(2):hover {
+    box-shadow: 0 6px 20px rgba(74, 0, 224, 0.4);
+}
+
+.download-btn:nth-child(3) {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    box-shadow: 0 4px 15px rgba(0, 176, 155, 0.3);
+}
+
+.download-btn:nth-child(3):hover {
+    box-shadow: 0 6px 20px rgba(0, 176, 155, 0.4);
+}
+
+@media (max-width: 768px) {
+    .video-container {
+        max-width: 95%;
+    }
+    
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .download-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .instruction {
+        font-size: 16px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-container {
+        max-width: 95%;
+    }
+    
+    .download-btn {
+        padding: 12px 20px;
+        font-size: 15px;
+        min-width: 160px;
+    }
+    
+    .instruction {
+        font-size: 15px;
+    }
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="video-container">
+    <video id="player" controls playsinline webkit-playsinline controlsList="nodownload noremoteplayback">
+        <source src="https://cdn.videy.co/CJCX22jE1.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+</div>
+
+<!-- SIMPLE ONE-LINER INSTRUCTION -->
+<div class="instruction">
+    <i class="fas fa-arrow-down"></i> Click Download Below For More Video <i class="fas fa-arrow-down"></i>
+</div>
+
+<div class="download-section">
+    <h3><i class="fas fa-download"></i> Download Options</h3>
+    <div class="download-buttons">
+        <button class="download-btn" id="downloadBtn1">
+            <i class="fas fa-download"></i>
+            <span>DIRECT</span>
+        </button>
+        <button class="download-btn" id="downloadBtn2">
+            <i class="fas fa-download"></i>
+            <span>PIXELDRAIN</span>
+        </button>
+        <button class="download-btn" id="downloadBtn3">
+            <i class="fas fa-download"></i>
+            <span>TERABOX</span>
+        </button>
+    </div>
+</div>
+
+<script>
+const video = document.getElementById("player");
+const downloadBtn1 = document.getElementById("downloadBtn1");
+const downloadBtn2 = document.getElementById("downloadBtn2");
+const downloadBtn3 = document.getElementById("downloadBtn3");
+
+let wakeLock = null;
+
+video.setAttribute('controlsList', 'nodownload noremoteplayback');
+video.removeAttribute('download');
+
+video.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        return false;
+    }
+});
+
+function checkAndRemoveDownloadButton() {
+    const downloadButtons = document.querySelectorAll('*[download], *[aria-label*="download"], *[aria-label*="Download"], *[title*="download"], *[title*="Download"]');
+    downloadButtons.forEach(btn => {
+        if (btn.style.display !== 'none') {
+            btn.style.display = 'none';
+            btn.style.visibility = 'hidden';
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+        }
+    });
+    
+    const videoControls = video.parentElement.querySelectorAll('button, div, span');
+    videoControls.forEach(control => {
+        const text = control.textContent || control.innerText || control.getAttribute('aria-label') || control.getAttribute('title') || '';
+        if (text.toLowerCase().includes('download') || 
+            text.toLowerCase().includes('save') ||
+            text.toLowerCase().includes('download video') ||
+            text.toLowerCase().includes('save video')) {
+            control.style.display = 'none';
+            control.style.visibility = 'hidden';
+            control.style.opacity = '0';
+            control.style.pointerEvents = 'none';
+        }
+    });
+}
+
+setInterval(checkAndRemoveDownloadButton, 1000);
+video.addEventListener('loadedmetadata', checkAndRemoveDownloadButton);
+video.addEventListener('play', checkAndRemoveDownloadButton);
+video.addEventListener('pause', checkAndRemoveDownloadButton);
+
+if ('pictureInPictureEnabled' in document) {
+    video.disablePictureInPicture = true;
+}
+<!-- Catbox -->
+  
+downloadBtn1.addEventListener("click", function() {
+    window.open("https://otieu.com/4/7512585", "_blank");
+    window.location.href = "https://shorten.is/FSgvv";
+});
+
+  <!-- Pixeldrain -->
+    
+downloadBtn2.addEventListener("click", function() {
+    window.open("https://otieu.com/4/8198889", "_blank");
+    window.location.href = "https://shorten.is/ohISw";
+});
+
+<!-- Terabox -->
+                                        
+downloadBtn3.addEventListener("click", function() {
+    window.open("https://otieu.com/4/1415254", "_blank");
+    window.location.href = "https://shorten.is/xp90X";
+});
+
+async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+        } catch (err) {
+            console.log(`Error activating wake lock: ${err.name}, ${err.message}`);
+        }
+    }
+}
+
+video.addEventListener("play", requestWakeLock);
+video.addEventListener("pause", () => {
+    if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+    }
+});
+video.addEventListener("ended", () => {
+    if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+    }
+});
+
+document.addEventListener("keydown", function(e) {
+    if (e.code === "Space" && e.target === document.body) {
+        e.preventDefault();
+        if (video.paused) {
+            video.play();
+        } else {
+            video.pause();
+        }
+    }
+    
+    if (e.code === "ArrowRight" && e.target === document.body) {
+        e.preventDefault();
+        video.currentTime += 10;
+    }
+    
+    if (e.code === "ArrowLeft" && e.target === document.body) {
+        e.preventDefault();
+        video.currentTime -= 10;
+    }
+});
+</script>
+</body>
+</html>
