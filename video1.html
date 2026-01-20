@@ -2,38 +2,175 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Video Player</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 body {
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0e17;
     color: #fff;
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
 }
 
-/* Video Container - FIXED SIZE */
-.video-container {
-    max-width: 900px;
+.container {
+    max-width: 1200px;
     width: 100%;
-    margin: 0 auto 25px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    background: #000;
-    position: relative;
-    aspect-ratio: 16/9;
+    text-align: center;
+    padding: 20px;
 }
 
-/* Force video to fill container */
+/* Timer */
+.timer-container {
+    margin-bottom: 40px;
+}
+
+.timer-circle {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 15px;
+    position: relative;
+}
+
+.timer-svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.timer-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 8;
+}
+
+.timer-progress {
+    fill: none;
+    stroke: #00ffcc;
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 377;
+    stroke-dashoffset: 377;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.timer-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #00ffcc;
+    text-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+}
+
+.timer-label {
+    color: #94a3b8;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+/* Watch Button */
+.watch-btn {
+    padding: 18px 50px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: #00ffcc;
+    color: #0a0e17;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 255, 204, 0.3);
+    display: none;
+    margin: 0 auto;
+}
+
+.watch-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0, 255, 204, 0.4);
+    background: #00e6b8;
+}
+
+.watch-btn:active {
+    transform: translateY(0);
+}
+
+.watch-btn i {
+    margin-right: 10px;
+}
+
+/* Video Container */
+.video-wrapper {
+    display: none;
+    margin: 40px auto;
+    max-width: 900px;
+    width: 100%;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 506px;
+}
+
+/* Responsive height adjustments */
+@media (max-width: 1000px) {
+    .video-container {
+        height: 450px;
+    }
+}
+
+@media (max-width: 768px) {
+    .video-container {
+        height: 380px;
+    }
+}
+
+@media (max-width: 576px) {
+    .video-container {
+        height: 320px;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-container {
+        height: 270px;
+    }
+}
+
+/* Fixed mobile-specific issues */
+@media (max-width: 400px) {
+    .video-container {
+        height: 240px;
+    }
+    
+    .timer-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .timer-number {
+        font-size: 2.8rem;
+    }
+}
+
 video {
     width: 100%;
     height: 100%;
@@ -41,52 +178,21 @@ video {
     background: #000;
 }
 
-/* HIDE DOWNLOAD OPTIONS IN VIDEO CONTROLS (but keep fullscreen) */
-video::-webkit-media-controls-download-button {
-    display: none !important;
-}
-
-video::-internal-media-controls-download-button {
-    display: none !important;
-}
-
-video::-webkit-media-controls-overflow-button {
-    display: none !important;
-}
-
-video::-webkit-media-controls-overlay-enclosure {
-    display: none !important;
-}
-
-video::-webkit-media-controls-picture-in-picture-button {
-    display: none !important;
-}
-
-/* KEEP FULLSCREEN BUTTON IN VIDEO CONTROLS */
-/* This allows the native fullscreen button to show */
-
-/* Download Buttons Section */
+/* Download Section */
 .download-section {
-    max-width: 900px;
-    margin: 25px auto;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    text-align: center;
+    display: none;
+    margin-top: 40px;
+    animation: fadeIn 0.5s ease;
 }
 
-.download-section h3 {
-    margin-bottom: 20px;
-    color: #96c93d;
-    font-size: 22px;
+.download-title {
+    font-size: 1.5rem;
+    color: #00ffcc;
+    margin-bottom: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-}
-
-.download-section h3 i {
-    color: #FF4B2B;
 }
 
 .download-buttons {
@@ -94,79 +200,111 @@ video::-webkit-media-controls-picture-in-picture-button {
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
 .download-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 24px;
-    background: linear-gradient(135deg, #FF416C, #FF4B2B);
+    padding: 16px 32px;
+    background: #ff6b00;
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 10px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
-    min-width: 180px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 200px;
     justify-content: center;
+    font-size: 1rem;
 }
 
 .download-btn:hover {
+    background: #e55a00;
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
+    box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
 }
 
 .download-btn i {
-    font-size: 18px;
+    font-size: 1.2rem;
 }
 
-.download-btn:nth-child(2) {
-    background: linear-gradient(135deg, #4A00E0, #8E2DE2);
-    box-shadow: 0 4px 15px rgba(74, 0, 224, 0.3);
+.download-note {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border-left: 3px solid #00ffcc;
 }
 
-.download-btn:nth-child(2):hover {
-    box-shadow: 0 6px 20px rgba(74, 0, 224, 0.4);
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.download-btn:nth-child(3) {
-    background: linear-gradient(135deg, #00b09b, #96c93d);
-    box-shadow: 0 4px 15px rgba(0, 176, 155, 0.3);
+.fade-in {
+    animation: fadeIn 0.5s ease;
 }
 
-.download-btn:nth-child(3):hover {
-    box-shadow: 0 6px 20px rgba(0, 176, 155, 0.4);
-}
-
-/* Responsive Design */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-    .video-container {
-        max-width: 95%;
+    .container {
+        padding: 15px;
+    }
+    
+    .timer-circle {
+        width: 130px;
+        height: 130px;
+    }
+    
+    .timer-number {
+        font-size: 3rem;
+    }
+    
+    .watch-btn {
+        padding: 16px 40px;
+        font-size: 1.1rem;
+        width: 100%;
+        max-width: 280px;
     }
     
     .download-buttons {
+        gap: 15px;
         flex-direction: column;
         align-items: center;
     }
     
     .download-btn {
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
+        min-width: auto;
     }
 }
 
 @media (max-width: 480px) {
-    .video-container {
-        max-width: 95%;
+    .timer-circle {
+        width: 110px;
+        height: 110px;
+    }
+    
+    .timer-number {
+        font-size: 2.5rem;
+    }
+    
+    .watch-btn {
+        padding: 14px 35px;
+        font-size: 1rem;
+        max-width: 250px;
     }
     
     .download-btn {
-        padding: 12px 20px;
-        font-size: 15px;
-        min-width: 160px;
+        padding: 14px 25px;
+        font-size: 0.95rem;
     }
 }
 </style>
@@ -174,190 +312,180 @@ video::-webkit-media-controls-picture-in-picture-button {
 </head>
 <body>
 
-<!-- Fixed Size Video Container -->
-<div class="video-container">
-    <video id="player" controls playsinline webkit-playsinline controlsList="nodownload noremoteplayback">
-        <source src="https://cdn.videy.co/8y4FOOKa1.mp4" type="video/mp4">
-        Your browser does not support HTML5 video.
-    </video>
-</div>
+<div class="container">
+    <!-- Timer -->
+    <div class="timer-container">
+        <div class="timer-circle">
+            <svg class="timer-svg">
+                <circle class="timer-bg" cx="70" cy="70" r="60"/>
+                <circle class="timer-progress" id="countdownProgress" cx="70" cy="70" r="60"/>
+            </svg>
+            <div class="timer-number" id="timer">3</div>
+        </div>
+        <div class="timer-label">PLEASE WAIT</div>
+    </div>
 
-<!-- Download Buttons Section -->
-<div class="download-section">
-    <h3><i class="fas fa-download"></i> Download Options</h3>
-    <div class="download-buttons">
-        <button class="download-btn" id="downloadBtn1">
-            <i class="fas fa-download"></i>
-            <span>DOWNLOAD 1</span>
-        </button>
-        <button class="download-btn" id="downloadBtn2">
-            <i class="fas fa-download"></i>
-            <span>DOWNLOAD 2</span>
-        </button>
-        <button class="download-btn" id="downloadBtn3">
-            <i class="fas fa-download"></i>
-            <span>DOWNLOAD 3</span>
-        </button>
+    <!-- Watch Button -->
+    <button class="watch-btn" id="watchBtn">
+        <i class="fas fa-play"></i> WATCH VIDEO
+    </button>
+
+    <!-- Video Player -->
+    <div class="video-wrapper" id="videoWrapper">
+        <div class="video-container" id="videoContainer">
+            <!-- Video with controls but NO download button -->
+            <video controls autoplay playsinline controlsList="nodownload" id="videoPlayer">
+                <source src="https://cdn.videy.co/OEqyvX5R1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <!-- Download Buttons -->
+    <div class="download-section" id="downloads">
+        <div class="download-title">
+            <i class="fas fa-download"></i> Download Videos
+        </div>
+        
+        <div class="download-buttons">
+            <button class="download-btn" onclick="openDownloadLink('https://otieu.com/4/8195375')">
+                <i class="fas fa-download"></i> DOWNLOAD VIDEO 1
+            </button>
+            <button class="download-btn" onclick="openDownloadLink('https://otieu.com/4/8195375')">
+                <i class="fas fa-download"></i> DOWNLOAD VIDEO 2
+            </button>
+        </div>
+        
+        <div class="download-note">
+            Click download buttons above to watch MORE videos
+        </div>
     </div>
 </div>
 
 <script>
-// =========================
-// ⭐ Variables
-// =========================
-const video = document.getElementById("player");
-const downloadBtn1 = document.getElementById("downloadBtn1");
-const downloadBtn2 = document.getElementById("downloadBtn2");
-const downloadBtn3 = document.getElementById("downloadBtn3");
+let time = 3;
+const totalTime = 3;
+const timer = document.getElementById("timer");
+const btn = document.getElementById("watchBtn");
+const countdownProgress = document.getElementById("countdownProgress");
+const video = document.getElementById("videoPlayer");
+const downloads = document.getElementById("downloads");
+const videoWrapper = document.getElementById("videoWrapper");
 
-let wakeLock = null;
+// Circle progress calculation
+const radius = 60;
+const circumference = 2 * Math.PI * radius;
+countdownProgress.style.strokeDasharray = `${circumference} ${circumference}`;
+countdownProgress.style.strokeDashoffset = circumference;
 
-// =========================
-// ⭐ COMPLETELY DISABLE DOWNLOAD FROM VIDEO CONTROLS
-// =========================
+function setProgress(percent) {
+    const offset = circumference - (percent / 100) * circumference;
+    countdownProgress.style.strokeDashoffset = offset;
+}
 
-// 1. Add controlsList attribute to disable download (but not fullscreen)
-video.setAttribute('controlsList', 'nodownload noremoteplayback');
-video.removeAttribute('download');
+// Countdown with mobile optimization
+const countdown = setInterval(() => {
+    time--;
+    timer.textContent = time;
+    
+    // Update progress circle
+    const progressPercent = ((totalTime - time) / totalTime) * 100;
+    setProgress(progressPercent);
+    
+    if (time <= 0) {
+        clearInterval(countdown);
+        // Change label
+        document.querySelector('.timer-label').textContent = "READY";
+        // Show button with fade in
+        btn.style.display = 'block';
+        // Force reflow for animation
+        void btn.offsetWidth;
+        btn.classList.add('fade-in');
+    }
+}, 1000);
 
-// 2. Disable right-click context menu
-video.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-    return false;
-});
+// Watch button click
+btn.onclick = () => {
+    // Open Monetag link
+    window.open("https://otieu.com/4/8198889", "_blank");
+    
+    // Hide timer and button
+    document.querySelector('.timer-container').style.display = 'none';
+    btn.style.display = 'none';
+    
+    // Show video and downloads
+    videoWrapper.style.display = 'block';
+    downloads.style.display = 'block';
+    
+    // Play video and scroll into view
+    setTimeout(() => {
+        videoWrapper.classList.add('fade-in');
+        downloads.classList.add('fade-in');
+        
+        // Remove download button from video controls
+        removeDownloadFromVideo();
+        
+        video.play().catch(e => {
+            console.log("Autoplay prevented:", e);
+            // If autoplay fails, show play button overlay
+            video.controls = true;
+        });
+        videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+};
 
-// 3. Disable keyboard shortcuts for saving
-document.addEventListener('keydown', function(e) {
-    // Disable Ctrl+S
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+// Function to remove download button from video controls
+function removeDownloadFromVideo() {
+    // Set attribute to hide download button
+    video.setAttribute('controlsList', 'nodownload');
+    
+    // Prevent right-click save
+    video.addEventListener('contextmenu', function(e) {
         e.preventDefault();
         return false;
-    }
-});
-
-// 4. Periodically check and remove download button if it appears
-function checkAndRemoveDownloadButton() {
-    const downloadButtons = document.querySelectorAll('*[download], *[aria-label*="download"], *[aria-label*="Download"], *[title*="download"], *[title*="Download"]');
-    downloadButtons.forEach(btn => {
-        if (btn.style.display !== 'none') {
-            btn.style.display = 'none';
-            btn.style.visibility = 'hidden';
-            btn.style.opacity = '0';
-            btn.style.pointerEvents = 'none';
+    });
+    
+    // Disable keyboard shortcuts for saving
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
         }
     });
     
-    const videoControls = video.parentElement.querySelectorAll('button, div, span');
-    videoControls.forEach(control => {
-        const text = control.textContent || control.innerText || control.getAttribute('aria-label') || control.getAttribute('title') || '';
-        if (text.toLowerCase().includes('download') || 
-            text.toLowerCase().includes('save') ||
-            text.toLowerCase().includes('download video') ||
-            text.toLowerCase().includes('save video')) {
-            control.style.display = 'none';
-            control.style.visibility = 'hidden';
-            control.style.opacity = '0';
-            control.style.pointerEvents = 'none';
-        }
-    });
+    // Periodically check and remove download button if it appears
+    function checkAndRemoveDownloadButton() {
+        const videoControls = video.parentElement.querySelectorAll('button, div, span');
+        videoControls.forEach(control => {
+            const text = control.textContent || control.innerText || control.getAttribute('aria-label') || control.getAttribute('title') || '';
+            if (text.toLowerCase().includes('download') || 
+                text.toLowerCase().includes('save')) {
+                control.style.display = 'none';
+                control.style.visibility = 'hidden';
+                control.style.opacity = '0';
+                control.style.pointerEvents = 'none';
+            }
+        });
+    }
+    
+    // Run check periodically
+    setInterval(checkAndRemoveDownloadButton, 1000);
+    video.addEventListener('loadedmetadata', checkAndRemoveDownloadButton);
+    video.addEventListener('play', checkAndRemoveDownloadButton);
 }
 
-// Run check periodically
-setInterval(checkAndRemoveDownloadButton, 1000);
-
-video.addEventListener('loadedmetadata', checkAndRemoveDownloadButton);
-video.addEventListener('play', checkAndRemoveDownloadButton);
-video.addEventListener('pause', checkAndRemoveDownloadButton);
-
-// 5. Disable picture-in-picture
-if ('pictureInPictureEnabled' in document) {
-    video.disablePictureInPicture = true;
+// Download button function
+function openDownloadLink(url) {
+    window.open(url, "_blank");
 }
 
-// =========================
-// ⭐ SIMPLE DOWNLOAD BUTTONS
-// =========================
-
-// Simple direct approach like your working code
-downloadBtn1.addEventListener("click", function() {
-    // Open ad in new tab (just like your working example)
-    window.open("https://otieu.com/4/7512585", "_blank");
-    
-    // Redirect current tab to main download site
-    window.location.href = "https://www.boldilocks.xyz/";
-});
-
-downloadBtn2.addEventListener("click", function() {
-    // Open ad in new tab (just like your working example)
-    window.open("https://otieu.com/4/8251888", "_blank");
-    
-    // Redirect current tab to main download site
-    window.location.href = "https://pixeldrain.com/u/xRCG2tr2";
-});
-
-downloadBtn3.addEventListener("click", function() {
-    // Open ad in new tab (just like your working example)
-    window.open("https://otieu.com/4/7512585", "_blank");
-    
-    // Redirect current tab to main download site
-    window.location.href = "https://www.boldilocks.xyz/";
-});
-
-// =========================
-// ⭐ Prevent Screen Sleep
-// =========================
-async function requestWakeLock() {
-    if ('wakeLock' in navigator) {
-        try {
-            wakeLock = await navigator.wakeLock.request("screen");
-            console.log("Wake Lock activated to prevent screen sleep");
-        } catch (err) {
-            console.log(`Error activating wake lock: ${err.name}, ${err.message}`);
-        }
-    }
-}
-
-video.addEventListener("play", requestWakeLock);
-
-video.addEventListener("pause", () => {
-    if (wakeLock !== null) {
-        wakeLock.release();
-        wakeLock = null;
-        console.log("Wake Lock released");
-    }
-});
-
-video.addEventListener("ended", () => {
-    if (wakeLock !== null) {
-        wakeLock.release();
-        wakeLock = null;
-        console.log("Wake Lock released");
-    }
-});
-
-// =========================
-// ⭐ Keyboard shortcuts for better UX
-// =========================
-document.addEventListener("keydown", function(e) {
-    // Spacebar to play/pause (native video controls)
-    if (e.code === "Space" && e.target === document.body) {
-        e.preventDefault();
-        if (video.paused) {
-            video.play();
-        } else {
-            video.pause();
-        }
-    }
-    
-    // Arrow keys for seeking
-    if (e.code === "ArrowRight" && e.target === document.body) {
-        e.preventDefault();
-        video.currentTime += 10;
-    }
-    
-    if (e.code === "ArrowLeft" && e.target === document.body) {
-        e.preventDefault();
-        video.currentTime -= 10;
+// Initialize on load
+window.addEventListener('load', function() {
+    // Ensure timer is properly positioned
+    const timerNumber = document.querySelector('.timer-number');
+    if (timerNumber) {
+        timerNumber.style.left = '50%';
+        timerNumber.style.top = '50%';
+        timerNumber.style.transform = 'translate(-50%, -50%)';
     }
 });
 </script>
