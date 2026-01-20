@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Player</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 * {
     margin: 0;
@@ -23,88 +23,54 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 900px;
     width: 100%;
     text-align: center;
-    padding: 20px;
 }
 
-/* Timer */
+/* Simple Timer - ORANGE COLOR */
 .timer-container {
     margin-bottom: 40px;
 }
 
-.timer-circle {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 15px;
-    position: relative;
-}
-
-.timer-svg {
-    transform: rotate(-90deg);
-    width: 100%;
-    height: 100%;
-}
-
-.timer-bg {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.1);
-    stroke-width: 8;
-}
-
-.timer-progress {
-    fill: none;
-    stroke: #00ffcc;
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke-dasharray: 377;
-    stroke-dashoffset: 377;
-    transition: stroke-dashoffset 1s linear;
-}
-
-.timer-number {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 3.5rem;
+.timer-simple {
+    font-size: 4rem;
     font-weight: 700;
-    color: #00ffcc;
-    text-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+    color: #ff6b00; /* Orange color */
+    margin-bottom: 15px;
+    line-height: 1;
+    min-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .timer-label {
     color: #94a3b8;
     font-size: 1rem;
     letter-spacing: 1px;
-    font-weight: 500;
 }
 
-/* Watch Button */
+/* Watch Button - Orange color to match */
 .watch-btn {
     padding: 18px 50px;
     font-size: 1.2rem;
     font-weight: 600;
-    background: #00ffcc;
-    color: #0a0e17;
+    background: #ff6b00; /* Orange color */
+    color: white;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(0, 255, 204, 0.3);
+    box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3);
     display: none;
     margin: 0 auto;
 }
 
 .watch-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0, 255, 204, 0.4);
-    background: #00e6b8;
-}
-
-.watch-btn:active {
-    transform: translateY(0);
+    box-shadow: 0 15px 40px rgba(255, 107, 0, 0.4);
+    background: #e55a00;
 }
 
 .watch-btn i {
@@ -114,61 +80,19 @@ body {
 /* Video Container */
 .video-wrapper {
     display: none;
-    margin: 40px auto;
+    margin: 30px auto;
     max-width: 900px;
     width: 100%;
 }
 
 .video-container {
-    position: relative;
     width: 100%;
     background: #000;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    height: 506px;
-}
-
-/* Responsive height adjustments */
-@media (max-width: 1000px) {
-    .video-container {
-        height: 450px;
-    }
-}
-
-@media (max-width: 768px) {
-    .video-container {
-        height: 380px;
-    }
-}
-
-@media (max-width: 576px) {
-    .video-container {
-        height: 320px;
-    }
-}
-
-@media (max-width: 480px) {
-    .video-container {
-        height: 270px;
-    }
-}
-
-/* Fixed mobile-specific issues */
-@media (max-width: 400px) {
-    .video-container {
-        height: 240px;
-    }
-    
-    .timer-circle {
-        width: 120px;
-        height: 120px;
-    }
-    
-    .timer-number {
-        font-size: 2.8rem;
-    }
+    aspect-ratio: 16/9;
 }
 
 video {
@@ -178,21 +102,11 @@ video {
     background: #000;
 }
 
-/* Download Section */
+/* Download Section - Orange color */
 .download-section {
     display: none;
-    margin-top: 40px;
+    margin-top: 30px;
     animation: fadeIn 0.5s ease;
-}
-
-.download-title {
-    font-size: 1.5rem;
-    color: #00ffcc;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
 }
 
 .download-buttons {
@@ -205,7 +119,7 @@ video {
 
 .download-btn {
     padding: 16px 32px;
-    background: #ff6b00;
+    background: #ff6b00; /* Orange color */
     color: white;
     border: none;
     border-radius: 10px;
@@ -238,7 +152,7 @@ video {
     padding: 15px;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 8px;
-    border-left: 3px solid #00ffcc;
+    border-left: 3px solid #ff6b00; /* Orange color */
 }
 
 /* Animations */
@@ -251,53 +165,45 @@ video {
     animation: fadeIn 0.5s ease;
 }
 
-/* Responsive Adjustments */
+/* Mobile Responsive */
 @media (max-width: 768px) {
     .container {
-        padding: 15px;
+        padding: 10px;
     }
     
-    .timer-circle {
-        width: 130px;
-        height: 130px;
-    }
-    
-    .timer-number {
-        font-size: 3rem;
+    .timer-simple {
+        font-size: 3.5rem;
+        min-height: 60px;
     }
     
     .watch-btn {
         padding: 16px 40px;
         font-size: 1.1rem;
         width: 100%;
-        max-width: 280px;
+        max-width: 300px;
     }
     
     .download-buttons {
-        gap: 15px;
         flex-direction: column;
         align-items: center;
+        gap: 15px;
     }
     
     .download-btn {
         width: 100%;
-        max-width: 280px;
+        max-width: 300px;
         min-width: auto;
     }
 }
 
 @media (max-width: 480px) {
-    .timer-circle {
-        width: 110px;
-        height: 110px;
-    }
-    
-    .timer-number {
-        font-size: 2.5rem;
+    .timer-simple {
+        font-size: 3rem;
+        min-height: 50px;
     }
     
     .watch-btn {
-        padding: 14px 35px;
+        padding: 14px 30px;
         font-size: 1rem;
         max-width: 250px;
     }
@@ -313,27 +219,20 @@ video {
 <body>
 
 <div class="container">
-    <!-- Timer -->
+    <!-- Simple Timer - ORANGE -->
     <div class="timer-container">
-        <div class="timer-circle">
-            <svg class="timer-svg">
-                <circle class="timer-bg" cx="70" cy="70" r="60"/>
-                <circle class="timer-progress" id="countdownProgress" cx="70" cy="70" r="60"/>
-            </svg>
-            <div class="timer-number" id="timer">3</div>
-        </div>
+        <div class="timer-simple" id="timer">3</div>
         <div class="timer-label">PLEASE WAIT</div>
     </div>
 
-    <!-- Watch Button -->
+    <!-- Watch Button - ORANGE -->
     <button class="watch-btn" id="watchBtn">
         <i class="fas fa-play"></i> WATCH VIDEO
     </button>
 
     <!-- Video Player -->
     <div class="video-wrapper" id="videoWrapper">
-        <div class="video-container" id="videoContainer">
-            <!-- Video with controls but NO download button -->
+        <div class="video-container">
             <video controls autoplay playsinline controlsList="nodownload" id="videoPlayer">
                 <source src="https://cdn.videy.co/OEqyvX5R1.mp4" type="video/mp4">
                 Your browser does not support the video tag.
@@ -341,21 +240,18 @@ video {
         </div>
     </div>
 
-    <!-- Download Buttons -->
+    <!-- Download Buttons - ORANGE -->
     <div class="download-section" id="downloads">
-        <div class="download-title">
-            <i class="fas fa-download"></i> Download Videos
-        </div>
-        
         <div class="download-buttons">
-            <button class="download-btn" onclick="openDownloadLink('https://otieu.com/4/8195375')">
-                <i class="fas fa-download"></i> DOWNLOAD VIDEO 1
+            <!-- Download 1: https://shorten.is/qZB9u -->
+            <button class="download-btn" onclick="openDownloadLink('https://shorten.is/qZB9u')">
+                <i class="fas fa-download"></i> DOWNLOAD 1
             </button>
-            <button class="download-btn" onclick="openDownloadLink('https://otieu.com/4/8195375')">
-                <i class="fas fa-download"></i> DOWNLOAD VIDEO 2
+            <!-- Download 2: https://shorten.is/trzbM -->
+            <button class="download-btn" onclick="openDownloadLink('https://shorten.is/trzbM')">
+                <i class="fas fa-download"></i> DOWNLOAD 2
             </button>
         </div>
-        
         <div class="download-note">
             Click download buttons above to watch MORE videos
         </div>
@@ -364,33 +260,16 @@ video {
 
 <script>
 let time = 3;
-const totalTime = 3;
 const timer = document.getElementById("timer");
 const btn = document.getElementById("watchBtn");
-const countdownProgress = document.getElementById("countdownProgress");
 const video = document.getElementById("videoPlayer");
 const downloads = document.getElementById("downloads");
 const videoWrapper = document.getElementById("videoWrapper");
 
-// Circle progress calculation
-const radius = 60;
-const circumference = 2 * Math.PI * radius;
-countdownProgress.style.strokeDasharray = `${circumference} ${circumference}`;
-countdownProgress.style.strokeDashoffset = circumference;
-
-function setProgress(percent) {
-    const offset = circumference - (percent / 100) * circumference;
-    countdownProgress.style.strokeDashoffset = offset;
-}
-
-// Countdown with mobile optimization
+// Simple countdown
 const countdown = setInterval(() => {
     time--;
     timer.textContent = time;
-    
-    // Update progress circle
-    const progressPercent = ((totalTime - time) / totalTime) * 100;
-    setProgress(progressPercent);
     
     if (time <= 0) {
         clearInterval(countdown);
@@ -398,9 +277,9 @@ const countdown = setInterval(() => {
         document.querySelector('.timer-label').textContent = "READY";
         // Show button with fade in
         btn.style.display = 'block';
-        // Force reflow for animation
-        void btn.offsetWidth;
-        btn.classList.add('fade-in');
+        setTimeout(() => {
+            btn.classList.add('fade-in');
+        }, 100);
     }
 }, 1000);
 
@@ -423,71 +302,20 @@ btn.onclick = () => {
         downloads.classList.add('fade-in');
         
         // Remove download button from video controls
-        removeDownloadFromVideo();
+        video.setAttribute('controlsList', 'nodownload');
         
         video.play().catch(e => {
             console.log("Autoplay prevented:", e);
-            // If autoplay fails, show play button overlay
             video.controls = true;
         });
         videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 300);
 };
 
-// Function to remove download button from video controls
-function removeDownloadFromVideo() {
-    // Set attribute to hide download button
-    video.setAttribute('controlsList', 'nodownload');
-    
-    // Prevent right-click save
-    video.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        return false;
-    });
-    
-    // Disable keyboard shortcuts for saving
-    document.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-            e.preventDefault();
-        }
-    });
-    
-    // Periodically check and remove download button if it appears
-    function checkAndRemoveDownloadButton() {
-        const videoControls = video.parentElement.querySelectorAll('button, div, span');
-        videoControls.forEach(control => {
-            const text = control.textContent || control.innerText || control.getAttribute('aria-label') || control.getAttribute('title') || '';
-            if (text.toLowerCase().includes('download') || 
-                text.toLowerCase().includes('save')) {
-                control.style.display = 'none';
-                control.style.visibility = 'hidden';
-                control.style.opacity = '0';
-                control.style.pointerEvents = 'none';
-            }
-        });
-    }
-    
-    // Run check periodically
-    setInterval(checkAndRemoveDownloadButton, 1000);
-    video.addEventListener('loadedmetadata', checkAndRemoveDownloadButton);
-    video.addEventListener('play', checkAndRemoveDownloadButton);
-}
-
 // Download button function
 function openDownloadLink(url) {
     window.open(url, "_blank");
 }
-
-// Initialize on load
-window.addEventListener('load', function() {
-    // Ensure timer is properly positioned
-    const timerNumber = document.querySelector('.timer-number');
-    if (timerNumber) {
-        timerNumber.style.left = '50%';
-        timerNumber.style.top = '50%';
-        timerNumber.style.transform = 'translate(-50%, -50%)';
-    }
-});
 </script>
 </body>
 </html>
