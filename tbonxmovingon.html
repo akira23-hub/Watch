@@ -336,45 +336,38 @@
       letter-spacing: 0.5px;
     }
 
-    .video-counter {
-      text-align: center;
-      margin-top: 0.8rem;
-      margin-bottom: 0.5rem;
-      font-size: 0.85rem;
-      color: #ffaa66;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .video-counter span {
-      background: rgba(255, 170, 102, 0.15);
-      padding: 4px 12px;
-      border-radius: 20px;
-      display: inline-block;
-    }
-
-    .nav-controls {
+    /* Download Button Styles */
+    .download-container {
       display: flex;
       justify-content: center;
-      gap: 1rem;
-      margin-top: 0.8rem;
+      margin-top: 1rem;
     }
 
-    .nav-btn {
-      background: #222;
-      border: 1px solid #3a3a3a;
-      padding: 10px 24px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      border-radius: 40px;
+    .download-btn {
+      background: linear-gradient(135deg, #ff8a5c, #ff4d4d);
+      border: none;
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      border-radius: 50px;
       cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: 0.5px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+      font-family: inherit;
     }
 
-    .nav-btn:active {
-      transform: scale(0.96);
+    .download-btn:active {
+      transform: scale(0.97);
+    }
+
+    .download-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
     }
 
     .external-notice {
@@ -491,9 +484,13 @@
         width: 32px;
         height: 32px;
       }
-      .nav-btn {
-        padding: 8px 18px;
-        font-size: 12px;
+      .download-btn {
+        padding: 10px 24px;
+        font-size: 0.85rem;
+      }
+      .download-btn svg {
+        width: 18px;
+        height: 18px;
       }
       .external-notice {
         padding: 0.7rem 1rem;
@@ -510,10 +507,6 @@
       }
       .content-badge {
         font-size: 0.6rem;
-        margin-top: 0.6rem;
-      }
-      .video-counter {
-        font-size: 0.75rem;
         margin-top: 0.6rem;
       }
       .controls-row {
@@ -593,6 +586,14 @@
       .video-controls {
         padding: 8px 10px;
       }
+      .download-btn {
+        padding: 8px 20px;
+        font-size: 0.75rem;
+      }
+      .download-btn svg {
+        width: 16px;
+        height: 16px;
+      }
     }
   </style>
 </head>
@@ -664,6 +665,17 @@
     </div>
   </div>
 
+  <!-- Download Button Below Video Player -->
+  <div class="download-container">
+    <button id="downloadBtn" class="download-btn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 16L12 8M12 16L9 13M12 16L15 13" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 20H19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      DOWNLOAD VIDEO
+    </button>
+  </div>
+
   <div class="external-notice">
     <div class="external-icon">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -680,10 +692,7 @@
 
 <script>
   const PLAYLIST = [
-    
     { type: "embed", embedUrl: "//sendvid.com/embed/hlgdt54z" }
-   
-  
   ];
 
   const SMART_LINKS = [
@@ -712,19 +721,12 @@
   const progressBar = document.getElementById('progressBar');
   const progressFill = document.getElementById('progressFill');
   const timeDisplay = document.getElementById('timeDisplay');
-  const prevBtn = document.getElementById('prevButton');
-  const nextBtn = document.getElementById('nextButton');
   const confirmBtn = document.getElementById('confirmEnterBtn');
   const exitBtn = document.getElementById('exitSiteBtn');
-  const currentVideoNumSpan = document.getElementById('currentVideoNum');
-  const totalVideosSpan = document.getElementById('totalVideos');
   const nativeMedia = document.getElementById('nativeMedia');
   const embedMedia = document.getElementById('embedMedia');
   const embedIframe = document.getElementById('embedIframe');
-
-  if (totalVideosSpan) {
-    totalVideosSpan.textContent = PLAYLIST.length;
-  }
+  const downloadBtn = document.getElementById('downloadBtn');
 
   function formatTime(seconds) {
     if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
@@ -788,12 +790,6 @@
     }
   }
 
-  function updateVideoCounter() {
-    if (currentVideoNumSpan) {
-      currentVideoNumSpan.textContent = currentVideoIndex + 1;
-    }
-  }
-
   function getRandomSmartLink() {
     return SMART_LINKS[Math.floor(Math.random() * SMART_LINKS.length)];
   }
@@ -850,20 +846,6 @@
       embedIframe.src = item.embedUrl;
       updateCenterPlayOverlay();
     }
-    
-    updateVideoCounter();
-  }
-
-  function goToPreviousVideo() {
-    if (!ageVerified) return;
-    currentVideoIndex = (currentVideoIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
-    loadVideoByIndex(currentVideoIndex);
-  }
-
-  function goToNextVideo() {
-    if (!ageVerified) return;
-    currentVideoIndex = (currentVideoIndex + 1) % PLAYLIST.length;
-    loadVideoByIndex(currentVideoIndex);
   }
 
   function handlePlayClick() {
@@ -911,6 +893,18 @@
       updateTimeDisplay();
       showBottomControls();
     }
+  }
+
+  // DOWNLOAD BUTTON HANDLER - Opens ad in new tab, then redirects to download page
+  function handleDownload() {
+    if (!ageVerified) return;
+    
+    // Open random ad in new tab
+    const adUrl = getRandomSmartLink();
+    window.open(adUrl, "_blank");
+    
+    // Redirect current tab to download page
+    window.location.href = "http://download.boldilocks.xyz/tbonxmovingon.html";
   }
 
   // Video event listeners
@@ -988,31 +982,45 @@
     }
   });
 
-  customPlayPauseBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    togglePlayPause();
-  });
+  if (customPlayPauseBtn) {
+    customPlayPauseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      togglePlayPause();
+    });
+  }
 
-  progressBar.addEventListener('click', seekVideo);
-  progressBar.addEventListener('touchstart', (e) => {
-    if (!ageVerified || isEmbedMode) return;
-    e.preventDefault();
-    const rect = progressBar.getBoundingClientRect();
-    const touch = e.touches[0];
-    let pos = (touch.clientX - rect.left) / rect.width;
-    pos = Math.max(0, Math.min(1, pos));
-    if (videoElement.duration) {
-      videoElement.currentTime = pos * videoElement.duration;
-      updateProgressBar();
-      updateTimeDisplay();
-      showBottomControls();
-    }
-  });
+  if (progressBar) {
+    progressBar.addEventListener('click', seekVideo);
+    progressBar.addEventListener('touchstart', (e) => {
+      if (!ageVerified || isEmbedMode) return;
+      e.preventDefault();
+      const rect = progressBar.getBoundingClientRect();
+      const touch = e.touches[0];
+      let pos = (touch.clientX - rect.left) / rect.width;
+      pos = Math.max(0, Math.min(1, pos));
+      if (videoElement.duration) {
+        videoElement.currentTime = pos * videoElement.duration;
+        updateProgressBar();
+        updateTimeDisplay();
+        showBottomControls();
+      }
+    });
+  }
 
-  playOverlay.addEventListener('click', (e) => {
-    e.stopPropagation();
-    handlePlayClick();
-  });
+  if (playOverlay) {
+    playOverlay.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handlePlayClick();
+    });
+  }
+
+  // Download button event
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      handleDownload();
+    });
+  }
 
   // Age verification
   function unlockAdultContent() {
@@ -1026,41 +1034,30 @@
     window.location.href = "https://www.google.com";
   }
 
-  confirmBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    unlockAdultContent();
-    // Enable navigation buttons
-    if (prevBtn) prevBtn.disabled = false;
-    if (nextBtn) nextBtn.disabled = false;
-    if (prevBtn) prevBtn.style.opacity = "1";
-    if (nextBtn) nextBtn.style.opacity = "1";
-    // Disable download protection
-    videoElement.addEventListener('contextmenu', (e) => e.preventDefault());
-    videoElement.addEventListener('dragstart', (e) => e.preventDefault());
-    document.addEventListener('contextmenu', (e) => {
-      if (e.target.closest('video')) e.preventDefault();
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      unlockAdultContent();
+      // Disable download protection
+      if (videoElement) {
+        videoElement.addEventListener('contextmenu', (e) => e.preventDefault());
+        videoElement.addEventListener('dragstart', (e) => e.preventDefault());
+      }
+      document.addEventListener('contextmenu', (e) => {
+        if (e.target.closest('video')) e.preventDefault();
+      });
     });
-  });
+  }
 
-  exitBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    exitSite();
-  });
-
-  prevBtn.addEventListener('click', () => {
-    if (ageVerified) goToPreviousVideo();
-  });
-  
-  nextBtn.addEventListener('click', () => {
-    if (ageVerified) goToNextVideo();
-  });
+  if (exitBtn) {
+    exitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      exitSite();
+    });
+  }
 
   // Initial state
   mainContentDiv.style.display = 'none';
-  prevBtn.disabled = true;
-  nextBtn.disabled = true;
-  prevBtn.style.opacity = "0.5";
-  nextBtn.style.opacity = "0.5";
   videoElement.removeAttribute('src');
   videoElement.load();
   videoElement.autoplay = false;
