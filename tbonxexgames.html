@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Ex-Games</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #0a0a0a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      position: relative;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .age-gate {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.96);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .age-gate.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .age-card {
+      background: linear-gradient(145deg, #1a1a1a 0%, #0f0f0f 100%);
+      border-radius: 32px;
+      max-width: 520px;
+      width: 90%;
+      padding: 2rem 1.8rem;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      animation: fadeSlideUp 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .warning-icon {
+      margin-bottom: 1rem;
+    }
+
+    .warning-icon svg {
+      width: 64px;
+      height: 64px;
+      filter: drop-shadow(0 2px 8px rgba(220, 38, 38, 0.4));
+    }
+
+    .age-card h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff8a5c, #ff4d4d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.75rem;
+    }
+
+    .age-card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+
+    .warning-text {
+      color: #e5e5e5;
+      line-height: 1.5;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 77, 77, 0.1);
+      padding: 1rem;
+      border-radius: 20px;
+      border-left: 3px solid #ff4d4d;
+      text-align: center;
+    }
+
+    .warning-text p {
+      margin-bottom: 0.5rem;
+    }
+
+    .warning-text strong {
+      color: #ff8888;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .btn-gate {
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-enter {
+      background: #2e7d32;
+      color: white;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-enter:hover {
+      background: #1b5e20;
+      transform: scale(1.02);
+    }
+
+    .btn-exit {
+      background: #8b0000;
+      color: white;
+      box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+    }
+
+    .btn-exit:hover {
+      background: #a52a2a;
+      transform: scale(1.02);
+    }
+
+    .disclaimer {
+      font-size: 0.7rem;
+      color: #aaa;
+      margin-top: 1rem;
+      border-top: 1px solid #2a2a2a;
+      padding-top: 1rem;
+      text-align: center;
+    }
+
+    .landing-card {
+      max-width: 100%;
+      width: 100%;
+      display: block;
+    }
+
+    .video-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    .fixed-video-container {
+      width: 100%;
+      max-width: 800px;
+      background: #000;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.6);
+    }
+
+    .fixed-video-container video {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      background: #000;
+      display: block;
+      cursor: pointer;
+    }
+
+    .fixed-video-container:fullscreen {
+      max-width: 100vw;
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    .fixed-video-container:fullscreen video {
+      width: auto;
+      height: auto;
+      max-width: 100vw;
+      max-height: 100vh;
+      aspect-ratio: auto;
+      object-fit: contain;
+    }
+
+    .play-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+      transition: opacity 0.3s ease;
+    }
+
+    .play-overlay.hidden {
+      display: none;
+    }
+
+    .play-button {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .play-button:active {
+      transform: scale(0.95);
+    }
+
+    .play-button svg {
+      width: 40px;
+      height: 40px;
+      margin-left: 5px;
+      fill: #000;
+    }
+
+    /* FIXED VIDEO CONTROLS - STAYS AT BOTTOM HORIZONTALLY */
+    .video-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0));
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 25;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      pointer-events: none;
+    }
+
+    .video-controls.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 5px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #ff4d4d;
+      border-radius: 3px;
+      width: 0%;
+      position: relative;
+    }
+
+    /* HORIZONTAL ROW - NO WRAPPING */
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    /* Hide scrollbar */
+    .controls-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .play-pause-btn {
+      background: rgba(0,0,0,0.6);
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50px;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .play-pause-btn:active {
+      transform: scale(0.95);
+    }
+
+    .play-pause-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .volume-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .volume-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .volume-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+    }
+
+    .volume-slider {
+      width: 70px;
+      height: 4px;
+      -webkit-appearance: none;
+      background: rgba(255,255,255,0.3);
+      border-radius: 5px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #ff4d4d;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .fullscreen-btn {
+      background: rgba(0,0,0,0.6);
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+      border-radius: 50px;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .fullscreen-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+    }
+
+    .fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+
+    .time-display {
+      color: white;
+      font-size: 13px;
+      font-family: monospace;
+      letter-spacing: 0.5px;
+      background: rgba(0,0,0,0.5);
+      padding: 4px 10px;
+      border-radius: 50px;
+      flex-shrink: 0;
+    }
+
+    .download-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .download-btn {
+      background: linear-gradient(115deg, #ff6347, #ff2e2e);
+      border: none;
+      padding: 12px 32px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: white;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 6px 16px rgba(255, 60, 60, 0.4);
+      font-family: inherit;
+    }
+
+    .download-btn:hover {
+      transform: scale(1.02);
+    }
+
+    .download-btn:active {
+      transform: scale(0.96);
+    }
+
+    .download-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+      stroke: white;
+      stroke-width: 1.5;
+    }
+
+    .external-notice {
+      max-width: 800px;
+      margin: 1.2rem auto 0 auto;
+      background: rgba(20, 20, 30, 0.9);
+      border-radius: 14px;
+      padding: 0.9rem 1.2rem;
+      border-left: 4px solid #ffa500;
+      backdrop-filter: blur(4px);
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+
+    .external-text {
+      flex: 1;
+      color: #ddd;
+      line-height: 1.4;
+      text-align: center;
+      font-size: 0.75rem;
+    }
+
+    .external-text strong {
+      color: #ffaa66;
+      font-weight: 600;
+    }
+
+    .content-badge {
+      text-align: center;
+      margin-top: 0.8rem;
+      font-size: 0.7rem;
+      color: #555;
+    }
+
+    /* RESPONSIVE - KEEPS CONTROLS HORIZONTAL */
+    @media (max-width: 768px) {
+      .age-card { padding: 1.4rem 1.2rem; max-width: 460px; }
+      .warning-icon svg { width: 48px; height: 48px; }
+      .age-card h1 { font-size: 1.4rem; }
+      .age-card h2 { font-size: 1.05rem; }
+      .warning-text { font-size: 0.8rem; padding: 0.8rem; }
+      .btn-gate { padding: 8px 20px; font-size: 0.85rem; }
+      .play-button { width: 65px; height: 65px; }
+      .play-button svg { width: 32px; height: 32px; }
+      .download-btn { padding: 10px 26px; font-size: 0.85rem; }
+      .download-btn svg { width: 18px; height: 18px; }
+      .external-notice { padding: 0.7rem 1rem; gap: 10px; font-size: 0.7rem; }
+      .external-text { font-size: 0.7rem; }
+      .controls-row { gap: 10px; }
+      .time-display { font-size: 11px; padding: 3px 8px; }
+      .play-pause-btn svg { width: 20px; height: 20px; }
+      .play-pause-btn { padding: 6px; }
+      .volume-btn svg { width: 18px; height: 18px; }
+      .volume-slider { width: 55px; }
+      .fullscreen-btn svg { width: 18px; height: 18px; }
+      .fullscreen-btn { padding: 6px; }
+    }
+
+    @media (max-width: 550px) {
+      .age-card { padding: 1.2rem 1rem; }
+      .age-card h1 { font-size: 1.25rem; }
+      .play-button { width: 55px; height: 55px; }
+      .play-button svg { width: 28px; height: 28px; }
+      .download-btn { padding: 8px 22px; font-size: 0.8rem; }
+      .download-btn svg { width: 16px; height: 16px; }
+      .external-notice { padding: 0.55rem 0.85rem; gap: 8px; font-size: 0.65rem; }
+      .external-text { font-size: 0.65rem; }
+      .content-badge { font-size: 0.6rem; }
+      .controls-row { gap: 8px; }
+      .time-display { font-size: 10px; padding: 2px 6px; }
+      .volume-slider { width: 50px; }
+      .volume-container { gap: 5px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="ageGate" class="age-gate">
+  <div class="age-card">
+    <div class="warning-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#ff4d4d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M2 17L12 22L22 17" stroke="#ff4d4d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M2 12L12 17L22 12" stroke="#ff8a5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="12" cy="12" r="2" fill="#ff4d4d" stroke="none"/>
+      </svg>
+    </div>
+    <h1>⚠️ RESTRICTED AREA</h1>
+    <h2>You must be 18+ to continue</h2>
+    <div class="warning-text">
+      <p><strong>🔞 Adult Content Warning</strong></p>
+      <p>This page contains video material intended for mature audiences only.<br>
+      By entering, you confirm that you are <strong>at least 18 years old</strong> (or the age of majority in your jurisdiction).</p>
+      <p>Viewer discretion is strongly advised.</p>
+    </div>
+    <div class="button-group">
+      <button id="confirmEnterBtn" class="btn-gate btn-enter">✔ I AM 18+ & ENTER</button>
+      <button id="exitSiteBtn" class="btn-gate btn-exit">✖ EXIT / I'M UNDER 18</button>
+    </div>
+    <div class="disclaimer">
+      By clicking "I AM 18+" you agree to our terms and confirm your legal age. 
+      This site uses cookies and may display third-party links.
+    </div>
+  </div>
+</div>
+
+<div class="landing-card" id="mainContent">
+  <div class="video-wrapper">
+    <div class="fixed-video-container" id="videoContainer">
+      <div class="play-overlay" id="playOverlay">
+        <div class="play-button">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+      </div>
+      <video id="mainVideo" preload="metadata" playsinline disableRemotePlayback></video>
+      
+      <div class="video-controls" id="videoControls">
+        <div class="progress-bar-container" id="progressBar">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="controls-row">
+          <button class="play-pause-btn" id="customPlayPauseBtn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+          <div class="volume-container">
+            <button class="volume-btn" id="volumeBtn">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 10v4a1 1 0 0 0 1 1h3l5 4V5l-5 4H4a1 1 0 0 0-1 1z M16.5 8.5A5 5 0 0 1 16.5 15.5" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <path d="M19.5 5.5a9 9 0 0 1 0 13" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.02" value="1">
+          </div>
+          <button class="fullscreen-btn" id="fullscreenBtn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="download-container">
+    <button id="downloadBtn" class="download-btn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 16L12 8M12 16L9 13M12 16L15 13" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 20H19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      DOWNLOAD VIDEO
+    </button>
+  </div>
+
+  <div class="external-notice">
+    <div class="external-text">
+      <strong>📡 External Hosting Notice:</strong> All video content displayed on this site is hosted on external servers. We do <strong>not host, upload, or store</strong> any video files locally. This platform only provides embedded links to third-party content. For any copyright concerns, please contact the original hosting service.
+    </div>
+  </div>
+  <div class="content-badge">🔞 18+ Only — Mature Content | Embed-only platform</div>
+</div>
+
+<script>
+  // DISABLE RIGHT CLICK & DEV TOOLS
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.key === 'u') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.key === 's') { e.preventDefault(); return false; }
+  });
+  document.addEventListener('selectstart', function(e) { e.preventDefault(); return false; });
+  document.addEventListener('dragstart', function(e) { e.preventDefault(); return false; });
+
+  // SMART LINKS for Monetag ads
+  const MONETAG_LINKS = [
+    "https://omg10.com/4/8251888",
+    "https://omg10.com/4/7512585",
+    "https://omg10.com/4/8257954",
+    "https://omg10.com/4/7512545",
+    "https://omg10.com/4/8198889"
+  ];
+
+  const DOWNLOAD_LINK = "https://zpi.cx/s3/p0V728.mp4?dl=1";
+  const VIDEO_SOURCE = "https://zpi.cx/s3/p0V728.mp4";
+
+  let adShownForCurrentVideo = false;
+  let userInitiated = false;
+  let ageVerified = false;
+  let controlsTimeout;
+
+  const ageGateDiv = document.getElementById('ageGate');
+  const mainContentDiv = document.getElementById('mainContent');
+  const videoElement = document.getElementById('mainVideo');
+  const playOverlay = document.getElementById('playOverlay');
+  const videoContainer = document.getElementById('videoContainer');
+  const videoControls = document.getElementById('videoControls');
+  const customPlayPauseBtn = document.getElementById('customPlayPauseBtn');
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
+  const timeDisplay = document.getElementById('timeDisplay');
+  const confirmBtn = document.getElementById('confirmEnterBtn');
+  const exitBtn = document.getElementById('exitSiteBtn');
+  const volumeSlider = document.getElementById('volumeSlider');
+  const volumeBtn = document.getElementById('volumeBtn');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  function formatTime(seconds) {
+    if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function updateTimeDisplay() {
+    if (videoElement && timeDisplay) {
+      timeDisplay.textContent = `${formatTime(videoElement.currentTime)} / ${formatTime(videoElement.duration)}`;
+    }
+  }
+
+  function updateProgressBar() {
+    if (videoElement && progressFill && videoElement.duration) {
+      progressFill.style.width = `${(videoElement.currentTime / videoElement.duration) * 100}%`;
+    }
+  }
+
+  function updatePlayPauseButton() {
+    if (customPlayPauseBtn && videoElement) {
+      if (videoElement.paused || videoElement.ended) {
+        customPlayPauseBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>`;
+      } else {
+        customPlayPauseBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/></svg>`;
+      }
+    }
+  }
+
+  function updateCenterPlayOverlay() {
+    if (videoElement.paused || videoElement.ended) {
+      playOverlay.classList.remove('hidden');
+    } else {
+      playOverlay.classList.add('hidden');
+    }
+  }
+
+  function showBottomControls() {
+    if (videoControls) {
+      videoControls.classList.add('visible');
+      clearTimeout(controlsTimeout);
+      if (!videoElement.paused && videoElement.currentTime > 0) {
+        controlsTimeout = setTimeout(() => {
+          if (!videoElement.paused) videoControls.classList.remove('visible');
+        }, 2500);
+      }
+    }
+  }
+
+  function getRandomMonetagLink() { 
+    return MONETAG_LINKS[Math.floor(Math.random() * MONETAG_LINKS.length)]; 
+  }
+  
+  function openMonetagAd() {
+    const adUrl = getRandomMonetagLink();
+    window.open(adUrl, "_blank");
+  }
+
+  function resetVideoState() {
+    adShownForCurrentVideo = false;
+    userInitiated = false;
+    updateCenterPlayOverlay();
+    updatePlayPauseButton();
+    updateTimeDisplay();
+    updateProgressBar();
+    showBottomControls();
+  }
+
+  function loadSingleVideo() {
+    videoElement.pause();
+    videoElement.currentTime = 0;
+    videoElement.src = VIDEO_SOURCE;
+    videoElement.load();
+    resetVideoState();
+    if (volumeSlider && videoElement) videoElement.volume = parseFloat(volumeSlider.value);
+  }
+
+  function togglePlayPause() {
+    if (!ageVerified) return;
+    if (videoElement.paused || videoElement.ended) {
+      userInitiated = true;
+      videoElement.play().catch(err => console.log(err));
+    } else {
+      videoElement.pause();
+      updateCenterPlayOverlay();
+      showBottomControls();
+    }
+    updatePlayPauseButton();
+  }
+
+  function seekVideo(e) {
+    if (!ageVerified) return;
+    const rect = progressBar.getBoundingClientRect();
+    let pos = (e.clientX - rect.left) / rect.width;
+    pos = Math.max(0, Math.min(1, pos));
+    if (videoElement.duration) videoElement.currentTime = pos * videoElement.duration;
+  }
+
+  function handleTouchSeek(e) {
+    if (!ageVerified) return;
+    e.preventDefault();
+    const rect = progressBar.getBoundingClientRect();
+    const touch = e.touches[0];
+    let pos = (touch.clientX - rect.left) / rect.width;
+    pos = Math.max(0, Math.min(1, pos));
+    if (videoElement.duration) videoElement.currentTime = pos * videoElement.duration;
+  }
+
+  function updateVolumeIcon(volume) {
+    if (!volumeBtn) return;
+    if (volume === 0) {
+      volumeBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 10v4a1 1 0 0 0 1 1h3l5 4V5l-5 4H4a1 1 0 0 0-1 1z M8 8 L20 20 M20 8 L8 20" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
+    } else if (volume < 0.5) {
+      volumeBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 10v4a1 1 0 0 0 1 1h3l5 4V5l-5 4H4a1 1 0 0 0-1 1z M16.5 8.5A5 5 0 0 1 16.5 15.5" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
+    } else {
+      volumeBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 10v4a1 1 0 0 0 1 1h3l5 4V5l-5 4H4a1 1 0 0 0-1 1z M16.5 8.5A5 5 0 0 1 16.5 15.5 M19.5 5.5a9 9 0 0 1 0 13" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
+    }
+  }
+
+  function setVolume(value) {
+    if (!videoElement) return;
+    const vol = Math.min(1, Math.max(0, value));
+    videoElement.volume = vol;
+    if (volumeSlider) volumeSlider.value = vol;
+    updateVolumeIcon(vol);
+  }
+
+  function toggleMute() {
+    if (!videoElement) return;
+    if (videoElement.volume > 0) {
+      videoElement.dataset.prevVolume = videoElement.volume;
+      setVolume(0);
+    } else {
+      const newVol = videoElement.dataset.prevVolume ? parseFloat(videoElement.dataset.prevVolume) : 1;
+      setVolume(newVol > 0 ? newVol : 0.8);
+    }
+  }
+
+  function toggleFullscreen() {
+    const container = videoContainer;
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      const requestMethod = container.requestFullscreen || container.webkitRequestFullscreen;
+      if (requestMethod) {
+        requestMethod.call(container).catch(err => console.log(err));
+      }
+    } else {
+      const exitMethod = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exitMethod) exitMethod.call(document);
+    }
+  }
+
+  function handleDownloadClick() {
+    if (!ageVerified) return;
+    openMonetagAd();
+    setTimeout(() => {
+      window.location.href = DOWNLOAD_LINK;
+    }, 300);
+  }
+
+  // Video event listeners
+  videoElement.addEventListener('play', () => {
+    if (!ageVerified) { videoElement.pause(); return; }
+    if (!adShownForCurrentVideo && userInitiated) { 
+      openMonetagAd(); 
+      adShownForCurrentVideo = true; 
+    }
+    updateCenterPlayOverlay();
+    updatePlayPauseButton();
+    showBottomControls();
+  });
+  
+  videoElement.addEventListener('pause', () => { 
+    if (ageVerified) { 
+      updatePlayPauseButton(); 
+      updateCenterPlayOverlay(); 
+      showBottomControls(); 
+    } 
+  });
+  
+  videoElement.addEventListener('ended', () => { 
+    if (ageVerified) { 
+      updateCenterPlayOverlay(); 
+      updatePlayPauseButton(); 
+      updateTimeDisplay(); 
+      showBottomControls(); 
+    } 
+  });
+  
+  videoElement.addEventListener('timeupdate', () => { 
+    updateTimeDisplay(); 
+    updateProgressBar(); 
+  });
+  
+  videoElement.addEventListener('loadedmetadata', () => { 
+    updateTimeDisplay(); 
+    updateProgressBar(); 
+    setVolume(videoElement.volume); 
+  });
+  
+  videoElement.addEventListener('click', (e) => { 
+    e.stopPropagation(); 
+    if (ageVerified) togglePlayPause(); 
+  });
+  
+  videoContainer.addEventListener('click', (e) => { 
+    if (e.target === videoElement && !videoElement.paused && ageVerified) showBottomControls(); 
+  });
+  
+  videoContainer.addEventListener('mousemove', () => { 
+    if (!videoElement.paused && ageVerified) showBottomControls(); 
+  });
+  
+  videoContainer.addEventListener('touchstart', () => { 
+    if (!videoElement.paused && ageVerified) showBottomControls(); 
+  });
+
+  if (customPlayPauseBtn) customPlayPauseBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlayPause(); });
+  if (progressBar) { progressBar.addEventListener('click', seekVideo); progressBar.addEventListener('touchstart', handleTouchSeek); }
+  if (playOverlay) playOverlay.addEventListener('click', (e) => { 
+    e.stopPropagation(); 
+    if (ageVerified) { 
+      userInitiated = true; 
+      videoElement.play().catch(err=>console.log(err)); 
+    } 
+  });
+  
+  if (volumeSlider) {
+    volumeSlider.addEventListener('input', (e) => { setVolume(parseFloat(e.target.value)); });
+    volumeSlider.addEventListener('change', () => { showBottomControls(); });
+  }
+  if (volumeBtn) volumeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMute(); showBottomControls(); });
+  if (fullscreenBtn) fullscreenBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFullscreen(); showBottomControls(); });
+  if (downloadBtn) downloadBtn.addEventListener('click', (e) => { e.preventDefault(); handleDownloadClick(); });
+  
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+      videoContainer.style.borderRadius = "0";
+    } else {
+      videoContainer.style.borderRadius = "16px";
+    }
+    showBottomControls();
+  });
+  
+  document.addEventListener('webkitfullscreenchange', () => {
+    if (document.webkitFullscreenElement) {
+      videoContainer.style.borderRadius = "0";
+    } else {
+      videoContainer.style.borderRadius = "16px";
+    }
+    showBottomControls();
+  });
+
+  function unlockAdultContent() {
+    ageVerified = true;
+    ageGateDiv.classList.add('hidden');
+    mainContentDiv.style.display = 'block';
+    loadSingleVideo();
+  }
+
+  function exitSite() { window.location.href = "https://www.google.com"; }
+  
+  if (confirmBtn) confirmBtn.addEventListener('click', (e) => { e.preventDefault(); unlockAdultContent(); });
+  if (exitBtn) exitBtn.addEventListener('click', (e) => { e.preventDefault(); exitSite(); });
+
+  mainContentDiv.style.display = 'none';
+  videoElement.removeAttribute('src');
+  videoElement.load();
+  videoElement.autoplay = false;
+
+  document.body.style.overflow = 'hidden';
+  const observer = new MutationObserver(() => { 
+    if (ageVerified) { 
+      document.body.style.overflow = ''; 
+      observer.disconnect(); 
+    } 
+  });
+  observer.observe(ageGateDiv, { attributes: true, attributeFilter: ['class'] });
+</script>
+</body>
+</html>
